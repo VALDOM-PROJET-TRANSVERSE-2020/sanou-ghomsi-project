@@ -1,0 +1,23 @@
+Structure a python project (package)
+  docs.python-guide.org/writing/structure
+
+Exercices
+  codinggame/training
+  coursera standford: coursera.org/specialization/algorithms#courses
+  
+Data analysis, datavisualization, datamining
+  datamining: mmds.org
+  pca and t-SNE (example word2vec )
+  Tensorflow: tensorboard
+
+
+Project Specifications
+  use *tensorflow transform* to make it possible to run the training in a disributed environment
+  create a docker API able to be requested
+  How to serve a model and deploy it in cloud platform (aws)
+
+
+Machine learning
+  towardsdatascience.com/how to train machine learning models in the cloud using cloud ml engine
+  Tensorflow estimators DNNLinearCombinedClassifier (Generated models comparison )
+  googcleCloudPlateform/ai-platform-samples/blob/master/training/tensorflow/structured/base/trainer/model.py
