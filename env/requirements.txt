@@ -5,6 +5,7 @@ matplotlib
 numpy
 OpenCV-Python
 pandas
+pytest
 seaborn
 tensorflow
 waitress
