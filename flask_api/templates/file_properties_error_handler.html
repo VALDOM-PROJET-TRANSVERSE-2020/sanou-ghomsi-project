@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>{% block title %} Oups, something wrong ! {% endblock %}</h1>
+<hr>
+<strong>error type: {{error}}</strong>
+<hr>
+<div>
+    <h5>Make sure your files have following properties</h5>
+    <ul>
+        <li>Allowed extensions: {{config['UPLOAD_EXTENSIONS']}}</li>
+        <li>Total files size should not exceed: {{config['MAX_CONTENT_LENGTH']/(1024*1024)}} MB</li>
+    </ul>
+</div>
+
+{% endblock %}

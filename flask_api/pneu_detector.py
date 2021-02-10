@@ -33,16 +33,12 @@ class PneumoniaDetector(object):
         error_message = "Failed to predict the class:  "
         try:
             has_pneumonia, pred_confidence = self.predict(image_file)
-            print("has_pneumonia:",has_pneumonia, "pred_confidence", pred_confidence )
             if has_pneumonia:
                 prediction = "Pneumonia detected"
             else:
                 prediction = "Normal Chest"
-            prediction_dict = {'pred': prediction, 'proba': pred_confidence}
-            print("prediction_dict: ", prediction_dict)
-            print("filename:", filename)
+            prediction_dict = {'pred': prediction, 'proba': pred_confidence[0]}
             filename = filename + "pred= " + str(prediction) + ";confidence= " + str(pred_confidence)
-            print("filename:", filename)
         except Exception as ex:
             prediction_dict = {'pred': error_message + str(ex), 'proba': "None"}
             filename = filename.split(".")[0] +" "+ error_message
