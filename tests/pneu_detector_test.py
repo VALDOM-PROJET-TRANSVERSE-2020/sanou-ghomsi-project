@@ -26,16 +26,16 @@ class TestModelPredictions(unittest.TestCase):
         prediction_dict, filename= Model.check_pneumonia(self.normal_image_file)
         expected_filename= "pred= " + str(prediction_dict["pred"]) + ";confidence= " + str(prediction_dict["proba"])
         self.assertEqual(prediction_dict["pred"], "Normal Chest")
-        self.assertEqual(prediction_dict["proba"]>0.5, True)
+        self.assertGreater(prediction_dict["proba"],0.5)
         self.assertEqual(filename,expected_filename)
 
     def test_check_pneumonia_infected(self):
         prediction_dict, filename = Model.check_pneumonia(self.infected_image_file)
         expected_filename = "pred= " + str(prediction_dict["pred"]) + ";confidence= " + str(prediction_dict["proba"])
         self.assertEqual(prediction_dict["pred"], "Pneumonia detected")
-        self.assertEqual(prediction_dict["proba"] > 0.5, True)
+        self.assertGreater(prediction_dict["proba"], 0.5)
         self.assertEqual(filename, expected_filename)
 
 
-#if __name__ == '__main__':
- #   unittest.main()
+if __name__ == '__main__':
+    unittest.main()

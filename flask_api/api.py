@@ -13,9 +13,9 @@ pneumonia_model_path = '../ml_model/finalModel/pneu_detect_cnn_model.h5'
 
 app = Flask(__name__)
 
-app.config['MAX_CONTENT_LENGTH'] = 4*1024 * 1024 # Should not exceed 4MB
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg','.jpeg', '.png', '.gif'] # Allowed extensions
-app.config['UPLOAD_PATH'] = 'uploads' # uploaded imges path
+app.config['MAX_CONTENT_LENGTH'] = 2048*2048 # Should not exceed 4MB
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg','.jpeg', '.png'] # Allowed extensions
+app.config['UPLOAD_PATH'] = 'uploads' # uploaded images path
 
 model= PneumoniaDetector(pneumonia_model_path)
 
@@ -60,12 +60,18 @@ def request_response():
     filename = secure_filename(uploaded_file.filename)
     if filename != '':
         file_ext = os.path.splitext(filename)[1]
-        if file_ext not in app.config['UPLOAD_EXTENSIONS'] or \
-                file_ext != validate_image(uploaded_file.stream):
+        validation_ext = validate_image(uploaded_file.stream)
+        if file_ext not in app.config['UPLOAD_EXTENSIONS'] and \
+                file_ext != validation_ext:
+            logging.error("\n*******************************************************"
+                            f"\nUnable to upload the specified file: file_ext= {file_ext},validation_ext= {validation_ext} "
+                            "\n*******************************************************")
             abort(400)
-        uploaded_file_copy = uploaded_file
-        print("here")
+
         prediction_dict, file_name = model.check_pneumonia(uploaded_file,filename)
+        logging.info("\n*******************************************************"
+                        "\nmodel.check_pneumonia(uploaded_file,filename) successfully called"
+                        "\n*******************************************************")
         prediction_json = json.dumps(prediction_dict, ensure_ascii=False)
         file_complete_name= file_name+ file_ext
         uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], file_complete_name))
