@@ -23,18 +23,19 @@ class TestModelPredictions(unittest.TestCase):
         self.assertGreater(pred_confidence, 0.5)
 
     def test_check_pneumonia_normal(self):
-        prediction_dict, filename= Model.check_pneumonia(self.normal_image_file)
-        expected_filename= "pred= " + str(prediction_dict["pred"]) + ";confidence= " + str(prediction_dict["proba"])
+        prediction_dict= Model.check_pneumonia(self.normal_image_file)
         self.assertEqual(prediction_dict["pred"], "Normal Chest")
         self.assertGreater(prediction_dict["proba"],0.5)
-        self.assertEqual(filename,expected_filename)
 
     def test_check_pneumonia_infected(self):
-        prediction_dict, filename = Model.check_pneumonia(self.infected_image_file)
-        expected_filename = "pred= " + str(prediction_dict["pred"]) + ";confidence= " + str(prediction_dict["proba"])
+        prediction_dict = Model.check_pneumonia(self.infected_image_file)
         self.assertEqual(prediction_dict["pred"], "Pneumonia detected")
         self.assertGreater(prediction_dict["proba"], 0.5)
-        self.assertEqual(filename, expected_filename)
+
+    def test_check_pneumonia_exception(self):
+        prediction_dict = Model.check_pneumonia("wrong/file/name")
+        self.assertIn("Failed to predict the class:  ", prediction_dict["pred"])
+        self.assertEqual(prediction_dict["proba"], "None")
 
 
 if __name__ == '__main__':

@@ -1,8 +1,8 @@
 from waitress import serve
 import json
 
-
 import imghdr
+import jsonify
 import os
 import shutil
 from flask import Flask, render_template, request, redirect, url_for, abort, send_from_directory
@@ -56,7 +56,7 @@ def handle_bad_request():
 @app.route('/apitest')
 def apitest():
     """check that the API is working"""
-    return "API working"
+    return jsonify({ "200": "API working"})
 
 @app.route('/properties_error')
 def file_type_error():
@@ -77,9 +77,7 @@ def make_predictions():
     file_names_list= []
     with os.scandir(app.config['UPLOAD_PATH']) as uploaded_images:
         for image in uploaded_images:
-            file_name = secure_filename(image.name)
-            filename = os.path.splitext(file_name)[0]
-            prediction_dict, file_name = model.check_pneumonia(image.path,filename)
+            prediction_dict = model.check_pneumonia(image.path)
             logging.warning("\n*******************************************************"
                         "\nmodel.check_pneumonia() successfully called"
                          f"\nfilename: {image.name}, prediction_dict: {prediction_dict}\n"
@@ -116,5 +114,5 @@ def save_files():
 
 
 if __name__ == "__main__":
-    #serve(app, host="127.0.0.1", port=5006)
-    app.run(host="127.0.0.1", debug=True, port=5005)
+    serve(app, host="127.0.0.1", port=5005)
+    #app.run(host="127.0.0.1", debug=True, port=5005)

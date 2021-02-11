@@ -29,7 +29,7 @@ class PneumoniaDetector(object):
         pred_confidence = pred_probas[0][pred_index]
         return pred_index, np.round(pred_confidence, 2)
 
-    def check_pneumonia(self, image_file, filename=""):
+    def check_pneumonia(self, image_file):
         error_message = "Failed to predict the class:  "
         try:
             has_pneumonia, pred_confidence = self.predict(image_file)
@@ -38,8 +38,6 @@ class PneumoniaDetector(object):
             else:
                 prediction = "Normal Chest"
             prediction_dict = {'pred': prediction, 'proba': pred_confidence[0]}
-            filename = filename + "pred= " + str(prediction) + ";confidence= " + str(pred_confidence)
         except Exception as ex:
             prediction_dict = {'pred': error_message + str(ex), 'proba': "None"}
-            filename = filename.split(".")[0] +" "+ error_message
-        return prediction_dict, filename
+        return prediction_dict
