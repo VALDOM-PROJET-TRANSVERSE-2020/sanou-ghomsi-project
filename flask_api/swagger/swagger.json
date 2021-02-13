@@ -1,8 +1,9 @@
 {
-  "openapi": "3.0.1",
+  "swagger": "2.0",
   "info": {
-    "title": "Pneumonia Detector",
     "description": "This API aims to help you make a diagnosis of a human chest. It can detect if the chest has pneumonia or not. All you need to do is give it an xray-images of extensions: .jpeg, .jpg, .png . Make sure the total size of all your images do not exceed 1GB. Find out more on : https://github.com/VALDOM-PROJET-TRANSVERSE-2020/sanou-ghomsi-project",
+    "version": "1.0.0",
+    "title": "Pneumonia Detector",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "desire.sanoupro@gmail.com"
@@ -10,14 +11,10 @@
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://127.0.0.1:5005/"
     }
-  ],
+  },
+  "host": "127.0.0.1:5005",
+  "basePath": "/",
   "tags": [
     {
       "name": "apitest",
@@ -32,6 +29,9 @@
       "description": " Make predictions on  the uploaded files"
     }
   ],
+  "schemes": [
+    "http"
+  ],
   "paths": {
     "/apitest": {
       "get": {
@@ -42,12 +42,8 @@
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           }
         }
@@ -59,34 +55,27 @@
           "save_files"
         ],
         "summary": "Upload your xray-image-files to make predictions",
+        "description": "",
         "operationId": "makepredictions",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": [
-                  "files[]"
-                ],
-                "type": "object",
-                "properties": {
-                  "files[]": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    },
-                    "description": "The files to upload."
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "files[]",
+            "type": "file",
+            "description": "The file to upload.",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
-            "description": "request successfully sent",
-            "content": {}
+            "description": "request successfully sent"
           }
         }
       }
@@ -97,15 +86,17 @@
           "predictions"
         ],
         "summary": "Make et return predictions on uploaded files",
+        "description": "",
         "operationId": "",
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "content": {}
+            "description": "successful operation"
           }
         }
       }
     }
-  },
-  "components": {}
+  }
 }

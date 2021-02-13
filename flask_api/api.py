@@ -6,19 +6,24 @@ import jsonify
 import os
 import shutil
 from flask import Flask, render_template, request, redirect, url_for, abort, send_from_directory
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import BadRequest
 import  logging
 from pneu_detector import *
 
+API_USED=True
 pneumonia_model_path = '../ml_model/finalModel/pneu_detect_cnn_model.h5'
 
 app = Flask(__name__)
-
+CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 1000*1024*1024 # Should not exceed 1GB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg','.jpeg', '.png'] # Allowed extensions
 app.config['UPLOAD_PATH'] = 'uploads' # uploaded images path
 app.jinja_env.filters['zip'] = zip
+
+# SWAGGER
+upload_form_route='/not_save__files' if API_USED else '/save_files'
 
 model= PneumoniaDetector(pneumonia_model_path)
 
@@ -43,24 +48,32 @@ def delete_uploads_folder_content(folder):
             logging.error('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-@app.errorhandler(413)
-@app.route('/properties_error/too_large')
-def too_large():
-    return render_template("file_properties_error_handler.html", config= app.config, error="Uploaded files are too large")
-
-@app.errorhandler(BadRequest)
-@app.route('/properties_error/BadRequest')
-def handle_bad_request():
-    return render_template("file_properties_error_handler.html", config= app.config, error="This is a bad request")
-
-@app.route('/apitest')
+@app.route('/apitest', methods=['GET'])
 def apitest():
     """check that the API is working"""
-    return jsonify({ "200": "API working"})
+    return "API working"
+
+@app.errorhandler(413)
+def too_large():
+    error_msg="Uploaded files are too large"
+    if API_USED:
+        return error_msg
+    return render_template("file_properties_error_handler.html", config= app.config, error=error_msg),400
+
+@app.errorhandler(BadRequest)
+def handle_bad_request():
+    bad_request_msg = "This is a bad request"
+    if API_USED:
+        return bad_request_msg
+    return render_template("file_properties_error_handler.html", config= app.config, error=bad_request_msg), BadRequest
 
 @app.route('/properties_error')
 def file_type_error():
-    return render_template("file_properties_error_handler.html", config= app.config, error="Wrong file type")
+    error_msg= "Wrong file type"
+    if API_USED:
+        error_msg+= f". Please use: {','.join(app.config['UPLOAD_EXTENSIONS'])} files !"
+        return error_msg
+    return render_template("file_properties_error_handler.html", config= app.config, error=error_msg)
 
 @app.route('/uploads/<filename>')
 def upload(filename):
@@ -68,26 +81,16 @@ def upload(filename):
 
 @app.route('/')
 def index():
+    if API_USED:
+        return "This is the Index Page"
     return render_template('index.html')
 
+@app.route(upload_form_route)
+def upload_form():
+    return render_template('upload_form.html')
 
-@app.route('/predictions')
-def make_predictions():
-    prediction_dict_list = []
-    file_names_list= []
-    with os.scandir(app.config['UPLOAD_PATH']) as uploaded_images:
-        for image in uploaded_images:
-            prediction_dict = model.check_pneumonia(image.path)
-            logging.warning("\n*******************************************************"
-                        "\nmodel.check_pneumonia() successfully called"
-                         f"\nfilename: {image.name}, prediction_dict: {prediction_dict}\n"
-                        "\n*******************************************************\n")
-            prediction_dict_list.append(prediction_dict)
-            file_names_list.append(image.name)
-        #predictions_json = json.dumps(prediction_dict_list, ensure_ascii=False)
-    return render_template('predictions.html', predictions_infos= prediction_dict_list, filenames=file_names_list)
 
-@app.route('/', methods=['POST'])
+@app.route('/save_files', methods=['POST'])
 def save_files():
     """save files in a temp folder after deleting its content"""
     delete_uploads_folder_content(app.config['UPLOAD_PATH'])
@@ -110,9 +113,32 @@ def save_files():
                               "\n*******************************************************")
                 return  redirect(url_for("file_type_error"))
             uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+    if API_USED:
+        return "Files successfully uploaded in temp folder"
     return redirect(url_for('make_predictions'))
 
 
+@app.route('/predictions')
+def make_predictions():
+    prediction_dict_list = []
+    file_names_list= []
+    prediction_dict_for_api = {}
+    with os.scandir(app.config['UPLOAD_PATH']) as uploaded_images:
+        for image in uploaded_images:
+            prediction_dict = model.check_pneumonia(image.path)
+            logging.warning("\n*******************************************************"
+                        "\nmodel.check_pneumonia() successfully called"
+                         f"\nfilename: {image.name}, prediction_dict: {prediction_dict}\n"
+                        "\n*******************************************************\n")
+            prediction_dict_list.append(prediction_dict)
+            logging.warning(prediction_dict_for_api)
+            file_names_list.append(image.name)
+            if API_USED:
+                prediction_dict_for_api[image.name] = prediction_dict
+    if API_USED:
+        return prediction_dict_for_api # jsonify([json.dumps(prediction) for prediction in prediction_dict_list], ensure_ascii=False)
+    return render_template('predictions.html', predictions_infos= prediction_dict_list, filenames=file_names_list)
+
 if __name__ == "__main__":
-    serve(app, host="127.0.0.1", port=5005)
-    #app.run(host="127.0.0.1", debug=True, port=5005)
+    #serve(app, host="127.0.0.1", port=5005)
+    app.run(host="127.0.0.1", debug=True, port=5005)

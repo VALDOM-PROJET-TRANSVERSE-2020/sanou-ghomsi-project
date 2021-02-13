@@ -1,4 +1,6 @@
 flask
+flask_cors
+jsonify
 werkzeug
 h5py
 matplotlib

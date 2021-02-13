@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>File Upload</h1>
+<hr>
+<form method="POST" action="" enctype="multipart/form-data">
+  <p><input type="file" name="files[]" multiple="true"></p>
+  <p><a class="nav-link" href="{{url_for('save_files')}}"><input type="submit" value="Make diagnosis"></a></p>
+</form>
+{% endblock %}
