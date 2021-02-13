@@ -1,6 +1,5 @@
 from waitress import serve
-import json
-
+import numpy as np
 import imghdr
 import jsonify
 import os
@@ -71,7 +70,7 @@ def handle_bad_request():
 def file_type_error():
     error_msg= "Wrong file type"
     if API_USED:
-        error_msg+= f". Please use: {','.join(app.config['UPLOAD_EXTENSIONS'])} files !"
+        error_msg+= f".Please use: {','.join(app.config['UPLOAD_EXTENSIONS'])} files !"
         return error_msg
     return render_template("file_properties_error_handler.html", config= app.config, error=error_msg)
 
@@ -134,9 +133,10 @@ def make_predictions():
             logging.warning(prediction_dict_for_api)
             file_names_list.append(image.name)
             if API_USED:
+                prediction_dict["proba"]= str(prediction_dict["proba"])
                 prediction_dict_for_api[image.name] = prediction_dict
     if API_USED:
-        return prediction_dict_for_api # jsonify([json.dumps(prediction) for prediction in prediction_dict_list], ensure_ascii=False)
+        return prediction_dict_for_api
     return render_template('predictions.html', predictions_infos= prediction_dict_list, filenames=file_names_list)
 
 if __name__ == "__main__":
