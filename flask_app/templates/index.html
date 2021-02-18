@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>{% block title %} Pneumonia Detector {% endblock %}</h1>
+<hr>
+<div>
+  <p>This API aims to help you make a diagnosis of a human chest. <br>
+    It can detect if the chest has pneumonia or not.
+  </p>
+    <strong>Make sure your files have following properties</strong>
+    <ul>
+        <li>Allowed extensions: {{config['UPLOAD_EXTENSIONS']}}</li>
+        <li>Total files size should not exceed: {{config['MAX_CONTENT_LENGTH']/(1024*1024)}} MB</li>
+    </ul>
+</div>
+
+{% endblock %}

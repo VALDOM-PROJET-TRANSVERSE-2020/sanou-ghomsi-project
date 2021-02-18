@@ -4,7 +4,7 @@ the model is saved and used in an API that can be requested to perform ML predic
 
 This project includes following steps:
 1. Find a notebook corresponding to the criteria requested on Kaggle
-We have chosen the notebook (Pneumonia detection based on Chest X-Ray images on imbalanced data using DL) in the following link:
+We have chosen the notebook in the following link:
 https://www.kaggle.com/michalbrezk/x-ray-pneumonia-cnn-tensorflow-2-0-keras-94
  <br/>The corresponding dataset is in the following link:
  https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia

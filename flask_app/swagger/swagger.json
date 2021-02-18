@@ -1,0 +1,102 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This API aims to help you make a diagnosis of a human chest. It can detect if the chest has pneumonia or not. All you need to do is give it an xray-images of extensions: .jpeg, .jpg, .png . Make sure the total size of all your images do not exceed 1GB. Find out more on : https://github.com/VALDOM-PROJET-TRANSVERSE-2020/sanou-ghomsi-project",
+    "version": "1.0.0",
+    "title": "Pneumonia Detector",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "desire.sanoupro@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "127.0.0.1:5005",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "apitest",
+      "description": "Test that API is working"
+    },
+    {
+      "name": "save_files",
+      "description": "Upload your files for predictions"
+    },
+    {
+      "name": "predictions",
+      "description": " Make predictions on  the uploaded files"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/apitest": {
+      "get": {
+        "tags": [
+          "apitest"
+        ],
+        "summary": "Simple test to make sure the API is Working",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/save_files": {
+      "post": {
+        "tags": [
+          "save_files"
+        ],
+        "summary": "Upload your xray-image-files to make predictions",
+        "description": "",
+        "operationId": "makepredictions",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "files[]",
+            "type": "file",
+            "description": "The file to upload.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "request successfully sent"
+          }
+        }
+      }
+    },
+    "/predictions": {
+      "get": {
+        "tags": [
+          "predictions"
+        ],
+        "summary": "Make et return predictions on uploaded files",
+        "description": "",
+        "operationId": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    }
+  }
+}
