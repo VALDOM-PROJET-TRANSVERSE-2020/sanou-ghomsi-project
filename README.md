@@ -1,6 +1,6 @@
-This project is aims to industrialize a Kaggle notebook from scratch.
-A machine learning python notebook with training done with Tensorflow/Keras package is processed, 
-the model is saved and used in an API that can be requested to perform ML predictions
+## This project aims to industrialize a Kaggle notebook from scratch.
+
+### A machine learning python notebook with training done with Tensorflow/Keras package is processed. The model is saved and used in an API that can be requested to perform ML predictions
 
 ## This project includes following steps:
 #### 1. Find a notebook corresponding to the criteria requested on Kaggle
